@@ -2,7 +2,7 @@
 const CONFIG = {
   // Replace with your Render URL after deployment
   // e.g. "https://sku-workshop-api.onrender.com"
-  API_URL: "https://sku-workshop-api.onrender.com",
+  API_URL: "https://sku-backend-d205.onrender.com",
 
   // For local development, use: "http://localhost:4000"
   // API_URL: "http://localhost:4000",
