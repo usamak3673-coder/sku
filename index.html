@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SKU Workshop — Inventory Code Generator</title>
+  <meta name="description" content="Generate, manage, and export product SKU codes for your ecommerce store. Free SKU generator tool with history and bulk generation." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231a1916'/><text x='6' y='22' font-size='14' font-family='monospace' fill='white'>SK</text></svg>" />
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <header class="site-header">
+    <div class="page-wrap">
+      <div class="header-inner">
+        <a class="logo" href="/">
+          <div class="logo-mark">SKU</div>
+          <div>
+            <div class="logo-name">SKU Workshop</div>
+            <div class="logo-tag">Inventory code generator</div>
+          </div>
+        </a>
+        <span class="api-status offline" id="api-status">Connecting…</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Main ── -->
+  <main class="main">
+    <div class="page-wrap">
+
+      <!-- Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total SKUs</div>
+          <div class="stat-value" id="st-total">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Categories</div>
+          <div class="stat-value" id="st-cats">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Generated today</div>
+          <div class="stat-value" id="st-today">—</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tab-bar">
+        <button class="tab active" data-tab="builder">SKU Builder</button>
+        <button class="tab" data-tab="bulk">Bulk</button>
+        <button class="tab" data-tab="history">History</button>
+        <button class="tab" data-tab="templates">Templates</button>
+      </div>
+
+      <!-- ═══════════ BUILDER PANEL ═══════════ -->
+      <div class="panel active" id="panel-builder">
+        <div class="card">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Category <span class="req">*</span></label>
+              <select id="b-cat">
+                <option value="">Select category…</option>
+                <option value="FURN">Furniture</option>
+                <option value="ELEC">Electronics</option>
+                <option value="APRL">Apparel</option>
+                <option value="FOOD">Food &amp; Beverage</option>
+                <option value="HLTH">Health &amp; Beauty</option>
+                <option value="TOYS">Toys &amp; Games</option>
+                <option value="SPRT">Sports</option>
+                <option value="HOME">Home &amp; Garden</option>
+                <option value="BOOK">Books &amp; Media</option>
+                <option value="AUTO">Automotive</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Format</label>
+              <select id="b-fmt">
+                <option value="DASH">Dashes — FURN-SOFA-BLU</option>
+                <option value="UNDER">Underscores — FURN_SOFA_BLU</option>
+                <option value="COMPACT">Compact — FURNSOFABLU</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Product name <span class="req">*</span></label>
+              <input type="text" id="b-name" placeholder="e.g. Leather Sofa" autocomplete="off" />
+            </div>
+            <div class="form-group">
+              <label>Product code</label>
+              <input type="text" id="b-code" placeholder="e.g. 001" />
+            </div>
+            <div class="form-group">
+              <label>Size / Variant</label>
+              <input type="text" id="b-size" placeholder="e.g. L, XL, 500ml" />
+            </div>
+            <div class="form-group">
+              <label>Material / Type</label>
+              <input type="text" id="b-mat" placeholder="e.g. BLK, Cotton, Oak" />
+            </div>
+            <div class="form-group">
+              <label>Custom suffix</label>
+              <input type="text" id="b-suf" placeholder="e.g. 2026, SALE" />
+            </div>
+          </div>
+
+          <!-- Preview -->
+          <div class="preview-box">
+            <div class="preview-left">
+              <div class="preview-label">Generated SKU</div>
+              <div class="preview-sku" id="preview-sku">—</div>
+              <div class="preview-meta" id="sku-length"></div>
+            </div>
+            <button class="btn btn-secondary" id="copy-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Copy
+            </button>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-primary" id="save-btn">Save to history</button>
+            <button class="btn btn-ghost" id="save-tmpl-btn">Save as template</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════ BULK PANEL ═══════════ -->
+      <div class="panel" id="panel-bulk">
+        <div class="card">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Category</label>
+              <select id="bulk-cat">
+                <option value="FURN">Furniture</option>
+                <option value="ELEC">Electronics</option>
+                <option value="APRL">Apparel</option>
+                <option value="FOOD">Food &amp; Beverage</option>
+                <option value="HLTH">Health &amp; Beauty</option>
+                <option value="TOYS">Toys &amp; Games</option>
+                <option value="SPRT">Sports</option>
+                <option value="HOME">Home &amp; Garden</option>
+                <option value="BOOK">Books &amp; Media</option>
+                <option value="AUTO">Automotive</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Format</label>
+              <select id="bulk-fmt">
+                <option value="DASH">Dashes</option>
+                <option value="UNDER">Underscores</option>
+                <option value="COMPACT">Compact</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Sequence numbers</label>
+              <select id="bulk-seq">
+                <option value="yes">Add sequence (001, 002…)</option>
+                <option value="no">No sequence</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:14px">
+            <label>Product names — one per line</label>
+            <textarea id="bulk-input" placeholder="Leather Sofa&#10;Oak Dining Table&#10;Velvet Armchair&#10;Glass Coffee Table"></textarea>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="generate-bulk-btn">Generate all SKUs</button>
+          </div>
+          <div class="bulk-results" id="bulk-results"></div>
+          <div class="btn-row" id="bulk-actions" style="display:none">
+            <button class="btn btn-secondary" id="bulk-save-btn">Save all to history</button>
+            <button class="btn btn-ghost" id="bulk-export-btn">Export CSV</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════ HISTORY PANEL ═══════════ -->
+      <div class="panel" id="panel-history">
+        <div class="card">
+          <div class="section-head">
+            <span class="section-title">Your SKU history</span>
+          </div>
+          <div class="filter-bar">
+            <select id="h-cat" onchange="App.applyFilters ? App.applyFilters() : null" style="flex:1">
+              <option value="">All categories</option>
+              <option value="FURN">Furniture</option>
+              <option value="ELEC">Electronics</option>
+              <option value="APRL">Apparel</option>
+              <option value="FOOD">Food &amp; Beverage</option>
+              <option value="HLTH">Health &amp; Beauty</option>
+              <option value="TOYS">Toys &amp; Games</option>
+              <option value="SPRT">Sports</option>
+              <option value="HOME">Home &amp; Garden</option>
+              <option value="BOOK">Books &amp; Media</option>
+              <option value="AUTO">Automotive</option>
+            </select>
+            <select id="h-fmt" onchange="App.applyFilters ? App.applyFilters() : null" style="flex:1">
+              <option value="">All formats</option>
+              <option value="DASH">Dashes</option>
+              <option value="UNDER">Underscores</option>
+              <option value="COMPACT">Compact</option>
+            </select>
+          </div>
+          <div class="history-list" id="history-list">
+            <div class="loading-row"><div class="spinner"></div> Loading…</div>
+          </div>
+          <div class="btn-row" style="margin-top:1.25rem">
+            <button class="btn btn-secondary" id="export-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export CSV
+            </button>
+            <button class="btn btn-ghost btn-danger" id="clear-btn">Clear all</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════ TEMPLATES PANEL ═══════════ -->
+      <div class="panel" id="panel-templates">
+        <div class="card">
+          <p style="font-size:13px;color:var(--text-muted);margin-bottom:1.25rem">
+            Click a template to pre-fill the builder. Save your own from the builder tab.
+          </p>
+          <div class="tmpl-list" id="tmpl-list">
+            <div class="loading-row"><div class="spinner"></div> Loading…</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ── Footer ── -->
+  <footer class="site-footer">
+    <div class="page-wrap">
+      SKU Workshop &mdash; Built with Node.js + MongoDB &mdash;
+      <a href="https://github.com" target="_blank">GitHub</a>
+    </div>
+  </footer>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/sku.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
